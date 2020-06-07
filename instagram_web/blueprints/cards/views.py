@@ -8,6 +8,8 @@ from models.user import User
 from werkzeug.utils import secure_filename
 from helpers import upload_file_to_s3
 from config import S3_BUCKET
+import random
+
 
 cards_blueprint = Blueprint('cards', __name__, template_folder='templates')
 
@@ -40,5 +42,24 @@ def create():
 
 @cards_blueprint.route('/')
 def index():
-    cards = Card.select()
+    card_query = Card.select()
+    cards = list(card_query)
+    random.shuffle(cards)
+    for i in range(len(cards)):
+        cards[i].order = i
+        cards[i].save()
     return render_template('cards/index.html', cards=cards)
+
+
+def shuffle():
+    card_query = Card.select()
+    cards = list(card_query)
+    random.shuffle(cards)
+    for i in range(len(cards)):
+        cards[i].order = i
+        cards[i].save()
+
+
+@socketio.on('draw_chance')
+def draw_chance():
+    card = Card.select().where(Card.category == 'chance').order_by(Card.order).limit(1)
