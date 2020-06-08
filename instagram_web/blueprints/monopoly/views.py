@@ -6,10 +6,16 @@ from models.activity_log import ActivityLog
 from app import socketio
 from flask_socketio import send, emit
 import json
+from instagram_web.blueprints.cards.views import shuffle, draw_card
 
 
 monopoly_blueprint = Blueprint(
     'monopoly', __name__, template_folder='templates')
+
+
+@monopoly_blueprint.route('/test')
+def test():
+    return render_template('monopoly/test-index.html')
 
 
 def update_activities():
@@ -168,6 +174,11 @@ def roll(data):
         current_user.jailed = 0
         current_user.doubles = 0
 
+    if current_user.position in (7, 22, 36):
+        draw_card('chance')
+    elif current_user.position in (2, 17, 33):
+        draw_card('community')
+
     if not current_user.save():
         flash('roll adding failed. Contact Shen.', 'danger')
         return redirect(url_for('users.index'))
@@ -178,6 +189,7 @@ def roll(data):
 @monopoly_blueprint.route('/reset')
 def reset():
     if current_user.is_authenticated and (current_user.username == 'Banker' or current_user.username == 'shennex'):
+        shuffle()
         banker = User.get_or_none(User.username == 'Banker')
         users = User.select().where((User.monopoly > 0) & (User.username != 'Banker'))
         for user in users:

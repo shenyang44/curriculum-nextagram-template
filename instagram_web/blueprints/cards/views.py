@@ -53,6 +53,9 @@ def index():
 
 def shuffle():
     card_query = Card.select()
+    for card in card_query:
+        card.order = None
+        card.save()
     cards = list(card_query)
     random.shuffle(cards)
     for i in range(len(cards)):
@@ -60,6 +63,21 @@ def shuffle():
         cards[i].save()
 
 
-@socketio.on('draw_chance')
-def draw_chance():
-    card = Card.select().where(Card.category == 'chance').order_by(Card.order).limit(1)
+def draw_card(category):
+    if category == 'chance':
+        cards = Card.select().where(Card.category == 'chance').order_by(Card.order).limit(1)
+    else:
+        cards = Card.select().where(Card.category == 'community').order_by(Card.order).limit(1)
+    card = cards[0]
+    card_dict = {
+        'description': card.description,
+        'image_url': card.image_url,
+        'order': card.order
+    }
+    if category == 'chance':
+        emit('chance', json.dumps(card_dict))
+    else:
+        emit('community', json.dumps(card_dict))
+
+    card.order += 5
+    card.save()
