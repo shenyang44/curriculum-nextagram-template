@@ -23,19 +23,21 @@ def new():
 def create():
     description = request.form.get('description')
     category = request.form.get('category')
-    if 'image-file' not in request.files:
-        flash('no file was chosen!', 'warning')
-        return redirect(request.referrer)
-    file = request.files.get('image-file')
-    file_name = secure_filename(file.filename)
-    img_upload_err = str(upload_file_to_s3(file, S3_BUCKET))
-    new_card = Card(description=description,
-                    category=category, image=file_name)
-
+    # if 'image-file' not in request.files:
+    #     flash('no file was chosen!', 'warning')
+    #     return redirect(request.referrer)
+    # file = request.files.get('image-file')
+    # file_name = secure_filename(file.filename)
+    # img_upload_err = str(upload_file_to_s3(file, S3_BUCKET))
+    # new_card = Card(description=description,
+    #                 category=category, image=file_name)
+    new_card = Card(description=description, category=category)
     if new_card.save():
         flash('new card was saved', 'success')
     else:
-        flash(f'saving failed, {img_upload_err}', 'danger')
+        flash('failwhale', 'danger')
+    # else:
+    #     flash(f'saving failed, {img_upload_err}', 'danger')
 
     return redirect(request.referrer)
 
