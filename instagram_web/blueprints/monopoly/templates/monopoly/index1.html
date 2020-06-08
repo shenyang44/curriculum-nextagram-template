@@ -392,10 +392,13 @@
                     if ((user.position.search('Chance') > -1) || (user.position.search('Community') > -1)) {
                         positionContainer.append(`
                         <div class='user-location'>
-                        <span class = 'username-span'>${user.username}</span> @ <span class = 'position-span'>${user.position}</span> | $${user.money}
-                        <hr>
-                    </div>
+                            <span class = 'username-span'>${user.username}</span> @ <span class = 'position-span'>${user.position}</span> | $${user.money}
+                            <hr>
+                        </div>
                         `)
+                        $('.position-span').hover((e) => {
+                            console.log(e)
+                        })
                     }
                     else {
                         positionContainer.append(`
@@ -405,7 +408,6 @@
                         </div>
                         `)
                     }
-
                 })
             })
 
