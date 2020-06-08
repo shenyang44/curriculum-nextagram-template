@@ -44,7 +44,7 @@ def create():
 
 @cards_blueprint.route('/')
 def index():
-    card_query = Card.select()
+    cards = Card.select()
     return render_template('cards/index.html', cards=cards)
 
 
