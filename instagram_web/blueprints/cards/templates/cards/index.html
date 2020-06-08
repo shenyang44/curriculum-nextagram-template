@@ -10,6 +10,8 @@
 <body>
     {% for card in cards %}
     <p>
+        id = {{card.id}} <br>
+        order = {{card.order}}
         <img src="{{card.image_url}}" width='300px' alt="">
         {{card.category}}
     </p>

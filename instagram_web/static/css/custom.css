@@ -267,14 +267,30 @@ color: black;
   padding: .5em;
 }
 
+#position-container{
+  z-index: 100;
+  padding-top: 3em;
+  height: 45em;
+}
+#activity-container{
+  height: 40em;
+}
 .mon-blank{
   border: none;
 }
 
 .mon-col{
   padding: 0px;
+  height: 55em;
 }
-
+.space-between{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.col-behind{
+  pointer-events: none;
+}
 .mon-red{
   background-color: rgba(255, 0, 0, 0.74);
 }
@@ -328,7 +344,9 @@ color: black;
   border: 2px black solid;
   cursor: pointer;
 }
-
+.prop{
+  pointer-events: all;
+}
 #current-user{
   opacity: 0;
   z-index: -1;
@@ -341,5 +359,14 @@ color: black;
 
 .username-span:hover{
   color: #53269c;
+  cursor: pointer;
+}
+
+.position-span{
+  font-weight:bold;
+}
+
+.position-span:hover{
+  color:#53269c;
   cursor: pointer;
 }

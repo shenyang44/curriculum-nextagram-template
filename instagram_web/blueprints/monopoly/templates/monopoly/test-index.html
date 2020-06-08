@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    {% assets "home_css" %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}">
+    {% endassets %}
+    {% assets "home_js" %}
+    <script src="https://kit.fontawesome.com/1816c993a6.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    <title>Monopoly!</title>
+</head>
+
+<body id='mon-body'>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class=flashes>
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div id='mon-alert' class="alert alert-warning fade" role="alert">
+        If you see this, it's broken. Please contact Shen.
+    </div>
+
+    <div class="fluid-container">
+        <div class="row">
+            <div id='mon-nav' class="col-.5 align-items-center">
+                <!-- dropdown for payments, etc. -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-info dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-dollar-sign"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" id='pay-modal-launcher' type='button' data-toggle="modal"
+                            data-target="#payModal">Pay
+                            Player/Bank </a>
+                        <a data-target='#houseModal' data-toggle='modal' type='button' class="dropdown-item"> WIP </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Hentai Here</a>
+                    </div>
+                </div>
+
+                <!-- Button to open property modal -->
+                <div>
+                    <button data-toggle="modal" data-target="#property-modal" id='prop-button' class="btn btn-dark"><i
+                            class="fas fa-home"></i>
+                    </button>
+                </div>
+                <br>
+                <div>
+                    <a href="{{url_for('monopoly.create')}}">Exit</a>
+                </div>
+            </div>
+            <div class="col-1 mon-col">
+                <section class="mon-section non-prop">
+                    Free parking
+                </section>
+                <section id='14' class="mon-section mon-orange prop">
+                    Vine Street
+                </section>
+                <section id='13' class="mon-section mon-orange prop">
+                    Marlborough Street
+                </section>
+                <section class="mon-section non-prop">
+                    Community Chest 2
+                </section>
+                <section id='12' class="mon-section mon-orange prop">
+                    Bow Street
+                </section>
+                <section id='11' class="mon-section prop">
+                    Marylebone Station
+                </section>
+                <section id='10' class="mon-section mon-pink prop">
+                    Northumber Land Ave.
+                </section>
+                <section id='9' class="mon-section mon-pink prop">
+                    Whitehall
+                </section>
+                <section id='8' class="mon-section prop">
+                    Electric Company
+                </section>
+                <section id='7' class="mon-section mon-pink prop">
+                    Pall Mall
+                </section>
+                <section id='jail' class="mon-section non-prop">
+                    Jail
+                </section>
+            </div>
+
+            <div class="col-1 mon-col">
+                <section id='15' class="mon-red mon-section prop">
+                    Strand
+                </section>
+                <section id='position-container' class="mon-blank mon-section">
+
+                </section>
+                <section id='6' class="mon-section mon-light-blue prop">
+                    Pentonville Road
+                </section>
+            </div>
+
+            <div class="col-1 mon-col space-between">
+                <section class="mon-section non-prop">
+                    Chance 2
+                </section>
+                <section id='5' class="mon-section mon-light-blue prop">
+                    Euston Road
+                </section>
+            </div>
+
+            <div class="col-1 mon-col space-between">
+                <section id='16' class="mon-red prop mon-section">
+                    Fleet Street
+                </section>
+                <section class="mon-section non-prop">
+                    Chance
+                </section>
+            </div>
+
+            <div class="col-1 mon-col space-between">
+                <section id='17' class="prop mon-red mon-section">
+                    Trafalgar Square
+                </section>
+                <section id='jail-pay-section' class="mon-blank mon-section">
+                </section>
+                <section id='4' class="mon-section mon-light-blue prop">
+                    The Angel Islington
+                </section>
+            </div>
+
+            <div class="col-1 mon-col space-between">
+                <section id='18' class="mon-section prop">
+                    Fenchurch St. Station
+                </section>
+                <section id='roll-section' class="mon-blank mon-section">
+                </section>
+                <section id='3' class="mon-section prop">
+                    King's Cross Station
+                </section>
+            </div>
+
+            <div class="col-1 space-between mon-col">
+                <section id='19' class="mon-section mon-yellow prop">
+                    Leicester Square
+                </section>
+                <section class="mon-section non-prop">
+                    Income tax. (10% or $200)
+                </section>
+            </div>
+            <div class="col-1 mon-col">
+                <section id='20' class="mon-section mon-yellow prop">
+                    Coventry Street
+                </section>
+                <section class="mon-blank mon-section">
+                    <br>
+                    <p class='activity-box'>
+                        Activity Log:
+                    </p>
+                    <hr>
+                </section>
+                <section id='activity-container' class="mon-blank mon-section">
+                </section>
+                <section id='2' class="mon-section mon-brown prop">
+                    Whitechapel Road
+                </section>
+            </div>
+
+            <div class="col-1 mon-col space-between">
+                <section id='21' class="mon-section prop">
+                    Water Works
+                </section>
+                <section class="mon-section non-prop">
+                    Community Chest
+                </section>
+            </div>
+
+            <div class="col-1 mon-col space-between">
+                <section id='22' class="mon-section mon-yellow prop">
+                    Piccadilly
+                </section>
+                <section id='1' class="mon-section mon-brown prop">
+                    Old Kent Road
+                </section>
+            </div>
+
+            <div class="col-1 mon-col">
+                <section class="mon-section non-prop">
+                    Go to Jail!!!
+                </section>
+                <section id='23' class="mon-section mon-green prop">
+                    Regent Street
+                </section>
+                <section id='24' class="mon-section mon-green prop">
+                    Oxford Street
+                </section>
+                <section class="mon-section non-prop">
+                    Community Chest 3
+                </section>
+                <section id='25' class="mon-section mon-green prop">
+                    Bond Street
+                </section>
+                <section id='26' class="mon-section prop">
+                    Liverpool Station
+                </section>
+                <section class="mon-section non-prop">
+                    Chance 3
+                </section>
+                <section id='27' class="mon-section mon-blue prop">
+                    Park Lane
+                </section>
+                <section class="mon-section non-prop">
+                    Supertax. ($100)
+                </section>
+                <section id='28' class="mon-section mon-blue prop">
+                    Mayfair
+                </section>
+                <section class="mon-section non-prop">
+                    Go <br>
+                    <-- </section>
+            </div>
+        </div>
+    </div>
+</body>
