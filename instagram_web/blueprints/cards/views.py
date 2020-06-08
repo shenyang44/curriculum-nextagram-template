@@ -45,11 +45,6 @@ def create():
 @cards_blueprint.route('/')
 def index():
     card_query = Card.select()
-    cards = list(card_query)
-    random.shuffle(cards)
-    for i in range(len(cards)):
-        cards[i].order = i
-        cards[i].save()
     return render_template('cards/index.html', cards=cards)
 
 
