@@ -23,21 +23,20 @@ def new():
 def create():
     description = request.form.get('description')
     category = request.form.get('category')
-    # if 'image-file' not in request.files:
-    #     flash('no file was chosen!', 'warning')
-    #     return redirect(request.referrer)
-    # file = request.files.get('image-file')
-    # file_name = secure_filename(file.filename)
-    # img_upload_err = str(upload_file_to_s3(file, S3_BUCKET))
-    # new_card = Card(description=description,
-    #                 category=category, image=file_name)
-    new_card = Card(description=description, category=category)
+
+    if 'image-file' not in request.files:
+        flash('no file was chosen!', 'warning')
+        return redirect(request.referrer)
+    file = request.files.get('image-file')
+    file_name = secure_filename(file.filename)
+    img_upload_err = str(upload_file_to_s3(file, S3_BUCKET))
+    new_card = Card(description=description,
+                    category=category, image=file_name)
+
     if new_card.save():
         flash('new card was saved', 'success')
     else:
-        flash('failwhale', 'danger')
-    # else:
-    #     flash(f'saving failed, {img_upload_err}', 'danger')
+        flash(f'saving failed, {img_upload_err}', 'danger')
 
     return redirect(request.referrer)
 
@@ -48,6 +47,7 @@ def index():
     return render_template('cards/index.html', cards=cards)
 
 
+@socketio.on('shuffle_cards')
 def shuffle():
     card_query = Card.select()
     for card in card_query:
@@ -71,10 +71,12 @@ def draw_card(category):
         'image_url': card.image_url,
         'order': card.order
     }
+
     if category == 'chance':
         emit('chance', json.dumps(card_dict))
     else:
         emit('community', json.dumps(card_dict))
 
-    card.order += 5
+    card.user_id = current_user.id
+    card.order += 32
     card.save()

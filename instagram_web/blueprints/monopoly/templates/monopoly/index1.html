@@ -61,6 +61,13 @@
                 <div>
                     <a href="{{url_for('monopoly.create')}}">Exit</a>
                 </div>
+                {% if current_user.username == 'Banker' %}
+                <div>
+                    <button id='shuffle-btn'>
+                        shuffle cards
+                    </button>
+                </div>
+                {% endif %}
             </div>
             <div class="col-1 mon-col">
                 <section class="mon-section non-prop">
@@ -411,8 +418,8 @@
                 })
             })
 
-            positionContainer.on('hover', '.position-span', (e) => {
-                console.log(e)
+            positionContainer.on('click', '.position-span', (e) => {
+
             })
             // sockets handling jail status and resulting interface
             const jailPaySection = $('#jail-pay-section')
@@ -431,13 +438,15 @@
                 socket.emit('jail_pay')
             })
 
+            let hasCard = false
             dieRoll = () => {
                 return Math.floor((Math.random() * 6) + 1)
             }
             // submits dice rolls to change position
             function submitRoll(r1, r2, jr = 0) {
-                rollData = JSON.stringify({ 'roll1': r1, 'roll2': r2, 'jail roll': jr })
+                let rollData = JSON.stringify({ 'roll1': r1, 'roll2': r2, 'jail roll': jr, 'hasCard': hasCard })
                 socket.emit('roll', rollData)
+                hasCard = false
             }
             //normal dice roll
             rollSection.on('click', '#roll-btn', () => {
@@ -596,12 +605,19 @@
                 console.log(card.description)
                 console.log(card.image_url)
                 console.log(card.order)
+                hasCard = true
             })
             socket.on('community', (data) => {
                 card = JSON.parse(data)
                 console.log(card.description)
                 console.log(card.image_url)
                 console.log(card.order)
+                hasCard = true
+            })
+
+            //shuffle cards button 
+            $('shuffle-btn').click(() => {
+                socket.emit('shuffle_cards')
             })
         })
     </script>
