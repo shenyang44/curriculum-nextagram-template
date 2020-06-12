@@ -89,7 +89,7 @@ def show(username):
         print('no such user in card.show')
         send('View card, user get error, contact shen')
         return
-    card = Card.get_or_none(Card.user_id=user.id)
+    card = Card.get_or_none(Card.user_id == user.id)
     if not card:
         print('no such user in card.show')
         send('View card error, contact shen')
