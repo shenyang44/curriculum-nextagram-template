@@ -636,7 +636,8 @@
                 console.log(e.target.getAttribute('data-card-owner'))
             })
 
-            socket.on('card_show', (card) => {
+            socket.on('card_show', (data) => {
+                card = JSON.parse(data)
                 $('#card-modal-title').text(`${card.category} card`)
                 $('#card-modal-content').html(`
                 <img width'400px' src="${card.image_url}" alt="chance/community card">
