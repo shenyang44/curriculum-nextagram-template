@@ -3,6 +3,7 @@ from flask_login import current_user, login_user, login_required
 from models.user import User
 from models.properties import Property
 from models.activity_log import ActivityLog
+from models.cards import Card
 from app import socketio
 from flask_socketio import send, emit
 import json
@@ -128,6 +129,12 @@ def create():
 @socketio.on('roll')
 def roll(data):
     roll_data = json.loads(data)
+    if roll_data['hasCard']:
+        user_card = Card.get_or_none(Card.user_id == current_user.id)
+        if user_card:
+            user_card.user_id = None
+            user_card.save()
+
     roll_0 = roll_data['roll1']
     roll_1 = roll_data['roll2']
     jail_roll = int(roll_data['jail roll'])

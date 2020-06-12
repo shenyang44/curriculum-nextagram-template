@@ -61,6 +61,13 @@
                 <div>
                     <a href="{{url_for('monopoly.create')}}">Exit</a>
                 </div>
+                {% if current_user.username == 'Banker' %}
+                <div>
+                    <button id='shuffle-btn'>
+                        shuffle cards
+                    </button>
+                </div>
+                {% endif %}
             </div>
             <div class="col-1 mon-col">
                 <section class="mon-section non-prop">
@@ -392,13 +399,10 @@
                     if ((user.position.search('Chance') > -1) || (user.position.search('Community') > -1)) {
                         positionContainer.append(`
                         <div class='user-location'>
-                            <span class = 'username-span'>${user.username}</span> @ <span class = 'position-span'>${user.position}</span> | $${user.money}
+                            <span class = 'username-span'>${user.username}</span> @ <span data-card-owner = 'user.username' class = 'position-span'>${user.position}</span> | $${user.money}
                             <hr>
                         </div>
                         `)
-                        $('.position-span').hover((e) => {
-                            console.log(e)
-                        })
                     }
                     else {
                         positionContainer.append(`
@@ -411,9 +415,6 @@
                 })
             })
 
-            positionContainer.on('hover', '.position-span', (e) => {
-                console.log(e)
-            })
             // sockets handling jail status and resulting interface
             const jailPaySection = $('#jail-pay-section')
             const rollSection = $('#roll-section')
@@ -431,13 +432,15 @@
                 socket.emit('jail_pay')
             })
 
+            let hasCard = false
             dieRoll = () => {
                 return Math.floor((Math.random() * 6) + 1)
             }
             // submits dice rolls to change position
             function submitRoll(r1, r2, jr = 0) {
-                rollData = JSON.stringify({ 'roll1': r1, 'roll2': r2, 'jail roll': jr })
+                let rollData = JSON.stringify({ 'roll1': r1, 'roll2': r2, 'jail roll': jr, 'hasCard': hasCard })
                 socket.emit('roll', rollData)
+                hasCard = false
             }
             //normal dice roll
             rollSection.on('click', '#roll-btn', () => {
@@ -541,6 +544,7 @@
                 let propRow = $('#prop-row')
                 propRow.html('')
                 propData = propResponse.values
+
                 if (propResponse.username == currentUsername) {
                     propData.forEach((x, i) => {
                         propRow.append(`
@@ -569,12 +573,15 @@
                     `)
                     })
                 }
+
                 otherUsers.forEach((value) => {
                     $('.transfer-dropdown').append(`<a class="dropdown-item transfer-select" href="#">${value}</a>`)
                 })
+
                 $('.prop-btn-container').not('.0').prepend(
                     '<button type="button" class="house-btn btn btn-success">Buy house/hotel</button>'
                 )
+
                 $('.transfer-select').click((e) => {
                     let propName = e.target.parentNode.parentNode.id
                     let username = e.target.textContent
@@ -583,6 +590,7 @@
                     }
                 })
             })
+
             $('#prop-row').on('click', '.house-btn', (e) => {
                 let propName = e.target.parentElement.id
                 if (confirm(`Confirm house purchase for ${propName}?`)) {
@@ -596,12 +604,28 @@
                 console.log(card.description)
                 console.log(card.image_url)
                 console.log(card.order)
+                hasCard = true
             })
             socket.on('community', (data) => {
                 card = JSON.parse(data)
                 console.log(card.description)
                 console.log(card.image_url)
                 console.log(card.order)
+                hasCard = true
+            })
+
+            positionContainer.on('click', '.position-span', (e) => {
+                socket.emit('view_card', e.target.attr('data-card-owner'))
+                console.log(e.target.attr('data-card-owner'))
+            })
+
+            socket.on('card_show', (card) => {
+                console.log(card.image_url)
+            })
+
+            //shuffle cards button 
+            $('shuffle-btn').click(() => {
+                socket.emit('shuffle_cards')
             })
         })
     </script>
