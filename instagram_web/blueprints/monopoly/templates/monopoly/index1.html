@@ -329,6 +329,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Card view modal -->
+    <div class="modal fade" id="card-modal" tabindex="-1" role="dialog" aria-labelledby="card-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="card-modal-title">Report this</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id='card-modal-content' class="modal-body d-flex justify-content-center">
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- end of modals -->
 
     <hr>
@@ -620,7 +637,10 @@
             })
 
             socket.on('card_show', (card) => {
-                console.log(card.image_url)
+                $('#card-modal-title').text(`${card.category} card`)
+                $('#card-modal-content').html(`
+                <img width'400px' src="${card.image_url}" alt="chance/community card">
+                `)
             })
 
             //shuffle cards button 

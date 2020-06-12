@@ -129,6 +129,7 @@ def create():
 @socketio.on('roll')
 def roll(data):
     roll_data = json.loads(data)
+
     if roll_data['hasCard']:
         user_card = Card.get_or_none(Card.user_id == current_user.id)
         if user_card:

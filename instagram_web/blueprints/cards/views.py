@@ -85,13 +85,20 @@ def draw_card(category):
 @socketio.on('view_card')
 def show(username):
     user = User.get_or_none(User.username == username)
+
     if not user:
         print('no such user in card.show')
         send('View card, user get error, contact shen')
         return
     card = Card.get_or_none(Card.user_id == user.id)
+
     if not card:
         print('no such user in card.show')
         send('View card error, contact shen')
         return
-    emit('card_show', card.image_url)
+
+    card_dict = {
+        'image_url': card.image_url,
+        'category': card.category
+    }
+    emit('card_show', json.dumps(card_dict))
