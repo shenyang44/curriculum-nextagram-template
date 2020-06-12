@@ -128,14 +128,12 @@ def create():
 
 @socketio.on('roll')
 def roll(data):
-    roll_data = json.loads(data)
-
-    if roll_data['hasCard']:
+    if len(current_user.card) > 0:
         user_card = Card.get_or_none(Card.user_id == current_user.id)
-        if user_card:
-            user_card.user_id = None
-            user_card.save()
+        user_card.user_id = None
+        user_card.save()
 
+    roll_data = json.loads(data)
     roll_0 = roll_data['roll1']
     roll_1 = roll_data['roll2']
     jail_roll = int(roll_data['jail roll'])
@@ -197,7 +195,7 @@ def roll(data):
 @monopoly_blueprint.route('/reset')
 def reset():
     if current_user.is_authenticated and (current_user.username == 'Banker' or current_user.username == 'shennex'):
-        shuffle()
+
         banker = User.get_or_none(User.username == 'Banker')
         users = User.select().where((User.monopoly > 0) & (User.username != 'Banker'))
         for user in users:
@@ -218,6 +216,13 @@ def reset():
         banker.save()
         deletion = ActivityLog.delete().where(ActivityLog.text != '')
         deletion.execute()
+
+        cards = Card.select().where(Card.user_id != None)
+        for card in cards:
+            card.user_id = None
+            card.save()
+        shuffle()
+
         return redirect(request.referrer)
     else:
         flash('no access for u, soz', 'danger')
