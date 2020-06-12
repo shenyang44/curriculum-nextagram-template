@@ -399,13 +399,10 @@
                     if ((user.position.search('Chance') > -1) || (user.position.search('Community') > -1)) {
                         positionContainer.append(`
                         <div class='user-location'>
-                            <span class = 'username-span'>${user.username}</span> @ <span class = 'position-span'>${user.position}</span> | $${user.money}
+                            <span class = 'username-span'>${user.username}</span> @ <span data-card-owner = 'user.username' class = 'position-span'>${user.position}</span> | $${user.money}
                             <hr>
                         </div>
                         `)
-                        $('.position-span').hover((e) => {
-                            console.log(e)
-                        })
                     }
                     else {
                         positionContainer.append(`
@@ -418,9 +415,6 @@
                 })
             })
 
-            positionContainer.on('click', '.position-span', (e) => {
-
-            })
             // sockets handling jail status and resulting interface
             const jailPaySection = $('#jail-pay-section')
             const rollSection = $('#roll-section')
@@ -550,6 +544,7 @@
                 let propRow = $('#prop-row')
                 propRow.html('')
                 propData = propResponse.values
+
                 if (propResponse.username == currentUsername) {
                     propData.forEach((x, i) => {
                         propRow.append(`
@@ -578,12 +573,15 @@
                     `)
                     })
                 }
+
                 otherUsers.forEach((value) => {
                     $('.transfer-dropdown').append(`<a class="dropdown-item transfer-select" href="#">${value}</a>`)
                 })
+
                 $('.prop-btn-container').not('.0').prepend(
                     '<button type="button" class="house-btn btn btn-success">Buy house/hotel</button>'
                 )
+
                 $('.transfer-select').click((e) => {
                     let propName = e.target.parentNode.parentNode.id
                     let username = e.target.textContent
@@ -592,6 +590,7 @@
                     }
                 })
             })
+
             $('#prop-row').on('click', '.house-btn', (e) => {
                 let propName = e.target.parentElement.id
                 if (confirm(`Confirm house purchase for ${propName}?`)) {
@@ -613,6 +612,15 @@
                 console.log(card.image_url)
                 console.log(card.order)
                 hasCard = true
+            })
+
+            positionContainer.on('click', '.position-span', (e) => {
+                socket.emit('view_card', e.target.attr('data-card-owner'))
+                console.log(e.target.attr('data-card-owner'))
+            })
+
+            socket.on('card_show', (card) => {
+                console.log(card.image_url)
             })
 
             //shuffle cards button 

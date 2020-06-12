@@ -80,3 +80,18 @@ def draw_card(category):
     card.user_id = current_user.id
     card.order += 32
     card.save()
+
+
+@socketio.on('view_card')
+def show(username):
+    user = User.get_or_none(User.username == username)
+    if not user:
+        print('no such user in card.show')
+        send('View card, user get error, contact shen')
+        return
+    card = Card.get_or_none(Card.user_id=user.id)
+    if not card:
+        print('no such user in card.show')
+        send('View card error, contact shen')
+        return
+    emit('card_show', card.image_url)
