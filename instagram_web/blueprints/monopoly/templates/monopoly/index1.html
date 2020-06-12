@@ -615,8 +615,8 @@
             })
 
             positionContainer.on('click', '.position-span', (e) => {
-                socket.emit('view_card', e.target.attr('data-card-owner'))
-                console.log(e.target.attr('data=card-owner'))
+                socket.emit('view_card', e.target.getAttribute('data-card-owner'))
+                console.log(e.target.getAttribute('data-card-owner'))
             })
 
             socket.on('card_show', (card) => {
