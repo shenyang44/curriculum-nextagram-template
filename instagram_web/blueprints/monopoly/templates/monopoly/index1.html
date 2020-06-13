@@ -138,6 +138,8 @@
                 <section id='17' class="prop mon-red mon-section">
                     Trafalgar Square
                 </section>
+                <div id='card-div'>
+                </div>
                 <section id='jail-pay-section' class="mon-blank mon-section">
                 </section>
                 <section id='4' class="mon-section mon-light-blue prop">
@@ -616,39 +618,35 @@
             })
 
             // chance and community chest cards
-            socket.on('chance', (data) => {
+            socket.on('card_drawn', (data) => {
                 card = JSON.parse(data)
-                console.log(card.description)
-                console.log(card.image_url)
-                console.log(card.order)
-                hasCard = true
+                $('card-div').html('<button id="card-btn" class="btn btn-outline-success">Draw Card</button>')
             })
-            socket.on('community', (data) => {
-                card = JSON.parse(data)
-                console.log(card.description)
-                console.log(card.image_url)
-                console.log(card.order)
-                hasCard = true
-            })
+
+            viewCard = (username) => socket.emit('view_card', username)
 
             positionContainer.on('click', '.position-span', (e) => {
-                socket.emit('view_card', e.target.getAttribute('data-card-owner'))
-                console.log(e.target.getAttribute('data-card-owner'))
+                viewCard(e.target.getAttribute('data-card-owner'))
             })
 
+            $('#card-btn').click(() => {
+                viewCard(currentUsername)
+                socket.emit('card_effect')
+                $('card-div').html('')
+            })
             socket.on('card_show', (data) => {
                 card = JSON.parse(data)
                 $('#card-modal-title').text(`${card.category} card`)
                 $('#card-modal-content').html(`
-                <img width='90%' src="${card.image_url}" alt="chance/community card">
+                <img class='card-img' src="${card.image_url}" alt="chance/community card">
                 `)
                 $('#card-modal').modal('show')
             })
 
+
             //shuffle cards button 
-            $('shuffle-btn').click(() => {
-                socket.emit('shuffle_cards')
-            })
+            $('#shuffle-btn').click(() => socket.emit('shuffle_cards'))
+
         })
     </script>
 </body>

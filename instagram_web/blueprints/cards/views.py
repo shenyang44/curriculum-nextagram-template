@@ -72,10 +72,7 @@ def draw_card(category):
         'order': card.order
     }
 
-    if category == 'chance':
-        emit('chance', json.dumps(card_dict))
-    else:
-        emit('community', json.dumps(card_dict))
+    emit('card_drawn', json.dumps(card_dict))
 
     card.user_id = current_user.id
     card.order += 32
@@ -102,3 +99,19 @@ def show(username):
         'category': card.category
     }
     emit('card_show', json.dumps(card_dict))
+
+
+@socketio.on('card_drawn')
+def card_effect():
+    if not current_user.is_authenticated:
+        flash('You need to be logged in!', 'danger')
+        return redirect(url_for('users.index'))
+
+    card = Card.get_or_none(Card.user_id == current_user.id)
+    if not card:
+        send('no card found! seek help')
+        return
+
+    if card.description == 'go to jail':
+        current_user.position = 10
+        current_user.save()

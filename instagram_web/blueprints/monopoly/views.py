@@ -126,16 +126,29 @@ def create():
     return redirect(url_for('users.index'))
 
 
+def go_and_jail_check():
+    if current_user.position > 39:
+        current_user.position = current_user.position - 40
+        current_user.money += 200
+        current_user.save()
+        return('passed go')
+
+    if current_user.position == 30:
+        current_user.position = 10
+        current_user.jailed = 0
+        current_user.doubles = 0
+        current_user.save()
+        return('in jail')
+
+
 @socketio.on('roll')
 def roll(data):
-    roll_data = json.loads(data)
-
-    if roll_data['hasCard']:
+    if len(current_user.card) > 0:
         user_card = Card.get_or_none(Card.user_id == current_user.id)
-        if user_card:
-            user_card.user_id = None
-            user_card.save()
+        user_card.user_id = None
+        user_card.save()
 
+    roll_data = json.loads(data)
     roll_0 = roll_data['roll1']
     roll_1 = roll_data['roll2']
     jail_roll = int(roll_data['jail roll'])
@@ -145,12 +158,11 @@ def roll(data):
     if jail_roll > 0:
         if roll_0 == roll_1:
             jail_free()
-            activity_create(f'{text} Thus escaping jail.')
+            text += 'Thus escaping jail.'
         elif current_user.jailed == 2:
             current_user.money -= 50
             jail_free()
-            activity_create(
-                f'{text} And got out of jail by paying $50')
+            text += 'Got out of jail by paying $50.'
         else:
             current_user.jailed += 1
             activity_create(
@@ -158,38 +170,28 @@ def roll(data):
             current_user.save()
             # early return to prevent position change.
             return
+    elif roll_0 == roll_1:
+        current_user.doubles += 1
     else:
-        activity_create(text)
-        if roll_0 == roll_1:
-            current_user.doubles += 1
-        else:
-            current_user.doubles = 0
+        current_user.doubles = 0
 
     current_user.position += roll_sum
-    current_user.save()
-
     if current_user.doubles == 3:
         current_user.position = 30
 
     current_user.save()
 
-    if current_user.position > 39:
-        current_user.position = current_user.position - 40
-        current_user.money += 200
-
-    if current_user.position == 30:
-        current_user.position = 10
-        current_user.jailed = 0
-        current_user.doubles = 0
+    if go_and_jail_check() == 'passed go':
+        text += 'Passed go and collected $200'
+    elif go_and_jail_check() == 'in jail':
+        text += 'And ended up in jail.'
 
     if current_user.position in (7, 22, 36):
         draw_card('chance')
     elif current_user.position in (2, 17, 33):
         draw_card('community')
 
-    if not current_user.save():
-        flash('roll adding failed. Contact Shen.', 'danger')
-        return redirect(url_for('users.index'))
+    activity_create(text)
     update_jailed()
     update_positions()
 
@@ -197,7 +199,7 @@ def roll(data):
 @monopoly_blueprint.route('/reset')
 def reset():
     if current_user.is_authenticated and (current_user.username == 'Banker' or current_user.username == 'shennex'):
-        shuffle()
+
         banker = User.get_or_none(User.username == 'Banker')
         users = User.select().where((User.monopoly > 0) & (User.username != 'Banker'))
         for user in users:
@@ -218,6 +220,13 @@ def reset():
         banker.save()
         deletion = ActivityLog.delete().where(ActivityLog.text != '')
         deletion.execute()
+
+        cards = Card.select().where(Card.user_id != None)
+        for card in cards:
+            card.user_id = None
+            card.save()
+        shuffle()
+
         return redirect(request.referrer)
     else:
         flash('no access for u, soz', 'danger')

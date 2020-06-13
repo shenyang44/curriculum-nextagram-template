@@ -291,38 +291,33 @@ color: black;
 .col-behind{
   pointer-events: none;
 }
+
+/* colours of board tiles */
 .mon-red{
   background-color: rgba(255, 0, 0, 0.74);
 }
-
 .mon-yellow{
   background-color: yellow;
 }
-
 .mon-blue{
   background-color: blue;
   color: lightgoldenrodyellow;
 }
-
 .mon-green{
   background-color: green;
   color: white;
 }
-
 .mon-brown{
   background-color: brown;
   color: white;
 }
-
 .mon-pink{
   background-color: #e4179f;
   color: white;
 }
-
 .mon-light-blue{
   background-color: lightblue;
 }
-
 .mon-orange{
   background-color: orange;
 }
@@ -333,10 +328,6 @@ color: black;
 
 .user-location{
   margin-left: 1em;
-  width: 250%;
-}
-
-#ownership-div{
   width: 250%;
 }
 
@@ -353,10 +344,8 @@ color: black;
 }
 
 .username-span{
-  /* font-size: 1.2em; */
   font-weight: bold;
 }
-
 .username-span:hover{
   color: #53269c;
   cursor: pointer;
@@ -365,8 +354,12 @@ color: black;
 .position-span{
   font-weight:bold;
 }
-
 .position-span:hover{
   color:#53269c;
   cursor: pointer;
+}
+
+.card-img{
+  width: 90%;
+  border-radius: 10px;
 }
