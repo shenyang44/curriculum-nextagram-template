@@ -9,7 +9,6 @@ from werkzeug.utils import secure_filename
 from helpers import upload_file_to_s3
 from config import S3_BUCKET
 import random
-from instagram_web.blueprints.monopoly.views import update_positions
 
 
 cards_blueprint = Blueprint('cards', __name__, template_folder='templates')
@@ -104,6 +103,7 @@ def show(username):
 
 @socketio.on('card_effect')
 def card_effect():
+    from instagram_web.blueprints.monopoly.views import update_positions
     if not current_user.is_authenticated:
         flash('You need to be logged in!', 'danger')
         return redirect(url_for('users.index'))
