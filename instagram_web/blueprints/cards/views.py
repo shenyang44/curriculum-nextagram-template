@@ -150,5 +150,7 @@ def card_effect():
             current_user.position = 28
         else:
             current_user.posiiton = 12
+    card.activated = True
+    card.save()
     current_user.save()
     update_positions()

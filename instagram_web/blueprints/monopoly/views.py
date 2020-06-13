@@ -89,6 +89,14 @@ def handle_connection():
     update_activities()
     update_users()
     update_jailed()
+    if current_user.card and not current_user.card.activated:
+        card = current_user.card
+        card_dict = {
+            'description': card.description,
+            'image_url': card.image_url,
+            'order': card.order
+        }
+        emit('card_drawn', json.dumps(card_dict))
 
 
 @socketio.on('money_request')
@@ -145,6 +153,7 @@ def roll(data):
     if len(current_user.card) > 0:
         user_card = Card.get_or_none(Card.user_id == current_user.id)
         user_card.user_id = None
+        user_card.activated = False
         user_card.save()
 
     roll_data = json.loads(data)
