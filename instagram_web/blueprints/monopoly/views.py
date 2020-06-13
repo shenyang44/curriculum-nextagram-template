@@ -153,16 +153,16 @@ def roll(data):
     roll_1 = roll_data['roll2']
     jail_roll = int(roll_data['jail roll'])
     roll_sum = int(roll_0) + int(roll_1)
-    text = f'{current_user.username} rolled {roll_0} & {roll_1}.'
+    text = f'{current_user.username} rolled {roll_0} & {roll_1}. '
 
     if jail_roll > 0:
         if roll_0 == roll_1:
             jail_free()
-            text += 'Thus escaping jail.'
+            text += 'Thus escaping jail. '
         elif current_user.jailed == 2:
             current_user.money -= 50
             jail_free()
-            text += 'Got out of jail by paying $50.'
+            text += 'Got out of jail by paying $50. '
         else:
             current_user.jailed += 1
             activity_create(
