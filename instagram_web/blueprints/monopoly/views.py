@@ -119,7 +119,6 @@ def create():
 
     if user.save():
         flash('updated successfully', 'success')
-
     else:
         flash('failwhale', 'danger')
 

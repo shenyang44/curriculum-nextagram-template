@@ -618,22 +618,22 @@
             })
 
             // chance and community chest cards
+            viewCard = (username) => socket.emit('view_card', username)
+
             socket.on('card_drawn', (data) => {
                 card = JSON.parse(data)
-                $('card-div').html('<button id="card-btn" class="btn btn-outline-success">Draw Card</button>')
+                $('#card-div').html('<button id="card-btn" class="btn btn-outline-success">Draw Card</button>')
+                $('#card-btn').click(() => {
+                    viewCard(currentUsername)
+                    socket.emit('card_effect')
+                    $('#card-div').html('')
+                })
             })
-
-            viewCard = (username) => socket.emit('view_card', username)
 
             positionContainer.on('click', '.position-span', (e) => {
                 viewCard(e.target.getAttribute('data-card-owner'))
             })
 
-            $('#card-btn').click(() => {
-                viewCard(currentUsername)
-                socket.emit('card_effect')
-                $('card-div').html('')
-            })
             socket.on('card_show', (data) => {
                 card = JSON.parse(data)
                 $('#card-modal-title').text(`${card.category} card`)
@@ -642,7 +642,6 @@
                 `)
                 $('#card-modal').modal('show')
             })
-
 
             //shuffle cards button 
             $('#shuffle-btn').click(() => socket.emit('shuffle_cards'))

@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from helpers import upload_file_to_s3
 from config import S3_BUCKET
 import random
+from instagram_web.blueprints.monopoly.views import update_positions
 
 
 cards_blueprint = Blueprint('cards', __name__, template_folder='templates')
@@ -101,7 +102,7 @@ def show(username):
     emit('card_show', json.dumps(card_dict))
 
 
-@socketio.on('card_drawn')
+@socketio.on('card_effect')
 def card_effect():
     if not current_user.is_authenticated:
         flash('You need to be logged in!', 'danger')
@@ -114,4 +115,40 @@ def card_effect():
 
     if card.description == 'go to jail':
         current_user.position = 10
-        current_user.save()
+        current_user.jailed = 0
+        current_user.doubles = 0
+    elif card.description == 'go back 3':
+        current_user.position -= 3
+    elif card.description == 'go to go':
+        current_user.position = 0
+        current_user.money += 200
+    elif card.description == 'go to kings':
+        current_user.money += 200
+        current_user.position = 5
+    elif card.description == 'go to mayfair':
+        current_user.position = 39
+    elif card.description == 'go to pall':
+        if current_user.position > 11:
+            current_user.money += 200
+        current_user.position = 11
+    elif card.description == 'go to railway':
+        if current_user.position == 36:
+            current_user.position = 5
+            current_user.money += 200
+        elif current_user.position == 22:
+            current_user.position = 25
+        else:
+            current_user.positon = 15
+    elif card.description == 'go to trafalgar':
+        if current_user.position > 24:
+            current_user.money += 200
+        current_user.positon = 24
+    elif card.description == 'nearest util':
+        if current_user.posiiton == 33:
+            current_user.money += 200
+        if current_user.position == 22:
+            current_user.position = 28
+        else:
+            current_user.posiiton = 12
+    current_user.save()
+    update_positions()
