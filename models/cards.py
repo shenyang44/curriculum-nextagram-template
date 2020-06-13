@@ -11,6 +11,7 @@ class Card(BaseModel):
     description = pw.CharField(null=True)
     order = pw.IntegerField(null=True, unique=True)
     user = pw.ForeignKeyField(User, backref='card', null=True)
+    activated = pw.BooleanField(default=False)
 
     @hybrid_property
     def image_url(self):
