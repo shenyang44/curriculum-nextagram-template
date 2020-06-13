@@ -126,6 +126,21 @@ def create():
     return redirect(url_for('users.index'))
 
 
+def go_and_jail_check():
+    if current_user.position > 39:
+        current_user.position = current_user.position - 40
+        current_user.money += 200
+        current_user.save()
+        return('passed go')
+
+    if current_user.position == 30:
+        current_user.position = 10
+        current_user.jailed = 0
+        current_user.doubles = 0
+        current_user.save()
+        return('in jail')
+
+
 @socketio.on('roll')
 def roll(data):
     if len(current_user.card) > 0:
@@ -143,12 +158,11 @@ def roll(data):
     if jail_roll > 0:
         if roll_0 == roll_1:
             jail_free()
-            activity_create(f'{text} Thus escaping jail.')
+            text += 'Thus escaping jail.'
         elif current_user.jailed == 2:
             current_user.money -= 50
             jail_free()
-            activity_create(
-                f'{text} And got out of jail by paying $50')
+            text += 'Got out of jail by paying $50.'
         else:
             current_user.jailed += 1
             activity_create(
@@ -156,38 +170,28 @@ def roll(data):
             current_user.save()
             # early return to prevent position change.
             return
+    elif roll_0 == roll_1:
+        current_user.doubles += 1
     else:
-        activity_create(text)
-        if roll_0 == roll_1:
-            current_user.doubles += 1
-        else:
-            current_user.doubles = 0
+        current_user.doubles = 0
 
     current_user.position += roll_sum
-    current_user.save()
-
     if current_user.doubles == 3:
         current_user.position = 30
 
     current_user.save()
 
-    if current_user.position > 39:
-        current_user.position = current_user.position - 40
-        current_user.money += 200
-
-    if current_user.position == 30:
-        current_user.position = 10
-        current_user.jailed = 0
-        current_user.doubles = 0
+    if go_and_jail_check() == 'passed go':
+        text += 'Passed go and collected $200'
+    elif go_and_jail_check() == 'in jail':
+        text += 'And ended up in jail.'
 
     if current_user.position in (7, 22, 36):
         draw_card('chance')
     elif current_user.position in (2, 17, 33):
         draw_card('community')
 
-    if not current_user.save():
-        flash('roll adding failed. Contact Shen.', 'danger')
-        return redirect(url_for('users.index'))
+    activity_create(text)
     update_jailed()
     update_positions()
 
