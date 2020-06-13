@@ -181,9 +181,10 @@ def roll(data):
 
     current_user.save()
 
-    if go_and_jail_check() == 'passed go':
+    gajc_return = go_and_jail_check()
+    if gajc_return == 'passed go':
         text += 'Passed go and collected $200'
-    elif go_and_jail_check() == 'in jail':
+    elif gajc_return == 'in jail':
         text += 'And ended up in jail.'
 
     if current_user.position in (7, 22, 36):
