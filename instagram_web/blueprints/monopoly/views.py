@@ -159,6 +159,7 @@ def roll(data):
     if len(current_user.card) > 0:
         user_card = Card.get_or_none(Card.user_id == current_user.id)
         user_card.user_id = None
+        user_card.alternative_img = None
         user_card.activated = False
         user_card.save()
 

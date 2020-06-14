@@ -66,9 +66,36 @@ def draw_card(category):
     else:
         cards = Card.select().where(Card.category == 'community').order_by(Card.order).limit(1)
     card = cards[0]
+
+    users = User.select().where(
+        (User.monopoly > 0) & (User.username != 'Banker'))
+    wealthiest_user = users[0]
+
+    for user in users:
+        if user.wealth > wealthiest_user.wealth:
+            wealthiest_user = user
+
+    if card.description == 'poor tax' and user.username == wealthiest_user.username:
+        card.alternative_img = 'https://nextagram-shen.s3.amazonaws.com/poor-tax-rich.jpg'
+    if card.description == 'doc fee':
+        poorest_user = users[0]
+        for user in users:
+            if user.wealth < poorest_user.wealth:
+                poorest_user = user
+
+        if user.id == wealthiest_user.id:
+            card.alternative_img = 'https://nextagram-shen.s3.amazonaws.com/doc-fee-1.jpg'
+        elif user.id == poorest_user.id:
+            card.alternative_img = 'https://nextagram-shen.s3.amazonaws.com/doc-fee-3.jpg'
+
+    card.save()
+    image_url = card.image_url
+    if card.alternative_img is not None:
+        image_url = card.alternative_img
+
     card_dict = {
         'description': card.description,
-        'image_url': card.image_url,
+        'image_url': image_url,
         'order': card.order
     }
 
@@ -94,8 +121,12 @@ def show(username):
         send('View card error, contact shen')
         return
 
+    image_url = card.image_url
+    if card.alternative_img is not None:
+        image_url = card.alternative_img
+
     card_dict = {
-        'image_url': card.image_url,
+        'image_url': image_url,
         'category': card.category
     }
     emit('card_show', json.dumps(card_dict))
