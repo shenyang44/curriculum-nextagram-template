@@ -36,7 +36,7 @@ class User(BaseModel):
     @hybrid_property
     def wealth(self):
         properties = self.properties
-        total = current_user.money
+        total = self.money
         for each in properties:
             total += (each.houses * each.house_price)
             total += each.price
