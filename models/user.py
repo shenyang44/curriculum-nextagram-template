@@ -33,6 +33,15 @@ class User(BaseModel):
 
         return req
 
+    @hybrid_property
+    def wealth(self):
+        properties = self.properties
+        total = current_user.money
+        for each in properties:
+            total += (each.houses * each.house_price)
+            total += each.price
+        return total
+
     def is_authenticated(self):
         return True
 

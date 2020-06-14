@@ -437,9 +437,10 @@
             // sockets handling jail status and resulting interface
             const jailPaySection = $('#jail-pay-section')
             const rollSection = $('#roll-section')
-            socket.on('jail_update', (value) => {
-                if (value > -1) {
-                    jailPaySection.html('<button type="button" class="btn btn-outline-warning">Pay $50</button>')
+            socket.on('jail_update', (data) => {
+                user = JSON.parse(data)
+                if (user.jailed > -1) {
+                    jailPaySection.html(`<button type="button" data-cost='${user.freedom_cost}'class="btn btn-outline-warning">Pay ${user.freedom_cost}</button>`)
                     rollSection.html('<button id="jail-roll" type="button" class="btn btn-outline-danger">Jail Roll</button>')
                 }
                 else {
@@ -448,7 +449,8 @@
                 }
             })
             jailPaySection.on('click', 'button', (e) => {
-                socket.emit('jail_pay')
+                cost = e.target.getAttribute('data-cost')
+                socket.emit('jail_pay', cost)
             })
 
             let hasCard = false
@@ -537,7 +539,6 @@
                 let payInfo = JSON.stringify({ 'amount': $('#amount-input').val(), 'recipient': $('#recipient-select').val() })
                 socket.emit('pay', payInfo)
                 $('#payModal').modal("hide")
-
             })
 
             // showing img modal on click, board tiles.

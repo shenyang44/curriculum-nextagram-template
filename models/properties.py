@@ -10,10 +10,10 @@ class Property(BaseModel):
     houses = pw.IntegerField(default=0)
     mortgaged = pw.BooleanField(default=False)
     user = pw.ForeignKeyField(User, backref='properties')
-    house_price = pw.IntegerField(null=True)
+    house_price = pw.IntegerField(default=0)
     category = pw.CharField()
     image = pw.CharField(null=True)
-    price = pw.IntegerField(null=True)
+    price = pw.IntegerField()
 
     def validate(self):
         return

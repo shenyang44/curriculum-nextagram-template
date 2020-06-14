@@ -64,7 +64,12 @@ def activity_create(txt):
 
 
 def update_jailed():
-    emit('jail_update', current_user.jailed)
+    user = {
+        'jailed': current_user.jailed,
+        'freedom_cost': current_user.wealth * 0.05
+    }
+    data = json.dumps(user)
+    emit('jail_update', data)
 
 
 def jail_free():
@@ -243,16 +248,16 @@ def reset():
 
 
 @socketio.on('jail_pay')
-def jail_pay():
+def jail_pay(cost):
     if current_user.is_authenticated:
-        current_user.money -= 50
+        current_user.money -= int(cost)
         jail_free()
         update_jailed()
         if not current_user.save():
             send('payment could not be done for some reason.', 'danger')
         else:
             activity_create(
-                f'{current_user.username} payed $50 to get out of jail.')
+                f'{current_user.username} payed ${cost} to get out of jail.')
     else:
         flash('need to be signed in to perform this action!', 'warning')
         return redirect(request.referrer)
