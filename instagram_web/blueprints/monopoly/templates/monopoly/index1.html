@@ -42,10 +42,8 @@
                         <i class="fas fa-dollar-sign"></i>
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" id='pay-modal-launcher' type='button' data-toggle="modal"
-                            data-target="#payModal">Pay
+                        <a class="dropdown-item" id='pay-modal-launcher' data-toggle="modal" data-target="#payModal">Pay
                             Player/Bank </a>
-                        <a data-target='#houseModal' data-toggle='modal' type='button' class="dropdown-item"> WIP </a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Hentai Here</a>
                     </div>
@@ -66,6 +64,14 @@
                     <button id='shuffle-btn'>
                         shuffle cards
                     </button>
+                </div>
+                {% endif %}
+                <div>
+                    <button id='info-btn'><i class="fas fa-info-circle"></i></button>
+                </div>
+                {% if current_user.username == 'Banker' %}
+                <div>
+                    <button id='users-wealth-btn'><i class="fas fa-users"></i></button>
                 </div>
                 {% endif %}
             </div>
@@ -344,6 +350,61 @@
                     </button>
                 </div>
                 <div id='card-modal-content' class="modal-body d-flex justify-content-center">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- info modal -->
+    <div id='info-modal' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div id='info-modal-content' class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">House Rules</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>
+                            Whilst in Jail, you are only entitled to 50% of collectible rent.
+                        </li>
+                        <br>
+                        <li>
+                            Payment for jail release is set to 5% of total assets.
+                        </li>
+                        <br>
+                        <li>
+                            Income tax is always 10% of total assets. Banker will let you know how much.
+                        </li>
+                        <br>
+                        <li>
+                            Have a good time and don't break any friendships :)
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Got it! </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- users' wealth modal, only viewable by Banker -->
+    <div id='wealth-modal' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div id='wealth-modal-content' class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Users' Wealth</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id='wealth-modal-body' class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Got it! </button>
                 </div>
             </div>
         </div>
@@ -647,6 +708,24 @@
             //shuffle cards button 
             $('#shuffle-btn').click(() => socket.emit('shuffle_cards'))
 
+            //info button
+            $('#info-btn').click(() => {
+                $('#info-modal').modal('show')
+            })
+
+            //users' wealth btn, for banker
+            $('#users-wealth-btn').click(() => {
+                socket.emit('wealth_request')
+            })
+            socket.on('wealth_show', (data) => {
+                $('#wealth-modal-body').html('')
+                data.forEach((value) => {
+                    $('#wealth-modal-body').append(`
+                    <p>${value}</p>
+                    `)
+                })
+                $('#wealth-modal').modal('show')
+            })
         })
     </script>
 </body>

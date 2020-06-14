@@ -159,6 +159,7 @@ def roll(data):
     if len(current_user.card) > 0:
         user_card = Card.get_or_none(Card.user_id == current_user.id)
         user_card.user_id = None
+        user_card.alternative_img = None
         user_card.activated = False
         user_card.save()
 
@@ -362,3 +363,13 @@ def prop_edit(recipient_username, prop_name):
             f'{recipient_username} received {prop_name} from {current_user.username}')
     else:
         send('property.save failed')
+
+
+@socketio.on('wealth_request')
+def wealth_index():
+    users = User.select().where((User.monopoly > 0) & (User.username != 'Banker'))
+    wealth_list = []
+    for user in users:
+        wealth_list.append(
+            f'{user.username} has a total wealth of ${user.wealth}')
+    emit('wealth_show', wealth_list)
