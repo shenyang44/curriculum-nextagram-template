@@ -364,3 +364,18 @@ color: black;
   width: 90%;
   border-radius: 10px;
 }
+
+#info-btn{
+  border: none;
+  font-size: 2.5em;
+  background-color: transparent;
+}
+
+#info-btn:hover{
+  cursor: pointer;
+  color: #303030;
+}
+
+#pay-modal-launcher:hover{
+  cursor: pointer;
+}

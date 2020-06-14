@@ -363,3 +363,13 @@ def prop_edit(recipient_username, prop_name):
             f'{recipient_username} received {prop_name} from {current_user.username}')
     else:
         send('property.save failed')
+
+
+@socketio.on('wealth_request')
+def wealth_index():
+    users = User.select().where((User.monopoly > 0) & (User.username != 'Banker'))
+    wealth_list = []
+    for user in users:
+        wealth_list.append(
+            f'{user.username} has a total wealth of ${user.wealth}')
+    emit('wealth_show', wealth_list)
