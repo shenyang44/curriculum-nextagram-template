@@ -8,6 +8,7 @@ from app import socketio
 from flask_socketio import send, emit
 import json
 from instagram_web.blueprints.cards.views import shuffle, draw_card
+import math
 
 
 monopoly_blueprint = Blueprint(
@@ -61,7 +62,7 @@ def activity_create(txt):
 def update_jailed():
     user = {
         'jailed': current_user.jailed,
-        'freedom_cost': current_user.wealth * 0.05
+        'freedom_cost': math.ceil(current_user.wealth * 0.05)
     }
     data = json.dumps(user)
     emit('jail_update', data)
