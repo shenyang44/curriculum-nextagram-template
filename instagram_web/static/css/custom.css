@@ -376,6 +376,6 @@ color: black;
   color: #303030;
 }
 
-#pay-modal-launcher:hover{
+.dropdown-item:hover{
   cursor: pointer;
 }

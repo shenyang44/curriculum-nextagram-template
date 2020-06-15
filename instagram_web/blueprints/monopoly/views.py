@@ -14,11 +14,6 @@ monopoly_blueprint = Blueprint(
     'monopoly', __name__, template_folder='templates')
 
 
-@monopoly_blueprint.route('/test')
-def test():
-    return render_template('monopoly/test-index.html')
-
-
 def update_activities():
     activities = ActivityLog.select().order_by(
         ActivityLog.created_at.desc())
@@ -209,7 +204,6 @@ def roll(data):
 
     activity_create(text)
     update_jailed()
-    update_positions()
 
 
 @monopoly_blueprint.route('/reset')
@@ -286,85 +280,6 @@ def pay(data):
             print('failed saving at pay func.')
 
 
-@socketio.on('prop_request')
-def prop_show(username):
-    if current_user.is_authenticated:
-        user = User.get_or_none(User.username == str(username))
-        print(username)
-        if not user:
-            print('no such user')
-            return
-        owned_props = Property.select().where(
-            Property.user_id == user.id).order_by(Property.created_at.desc())
-
-        prop_data = []
-        for each in owned_props:
-            image_url = each.image_url
-            house_price = each.house_price
-            houses = each.houses
-            name = each.name
-            prop_data.append({
-                'name': name,
-                'houses': houses,
-                'house_price': house_price,
-                'image_url': image_url
-            })
-        prop_dict = {
-            'username': user.username,
-            'values': prop_data
-        }
-        data = json.dumps(prop_dict)
-        emit('prop_response', data)
-
-
-@socketio.on('house_buy')
-def house_create(prop_name):
-    if current_user.is_authenticated:
-        current_prop = Property.get_or_none(Property.name == prop_name)
-        if not current_prop:
-            print('not prop')
-            flash('No such property exists! Trouble. Contact shen.', 'warning')
-            return redirect(url_for('users.index'))
-        if current_prop.user_id != current_user.id:
-            print('not user')
-            flash('You are not authorized to do that', 'danger')
-            return redirect(url_for('users.index'))
-
-        if current_user.money < current_prop.house_price:
-            print('broke')
-            send('broke')
-        else:
-            current_user.money -= current_prop.house_price
-            current_prop.houses += 1
-            if not current_prop.save():
-                print('prop did not save')
-
-            if not current_user.save():
-                print('user did not save')
-
-            activity_create(
-                f'{current_user.username} bought a house for {prop_name} | ${current_prop.house_price}')
-
-
-@socketio.on('prop_transfer')
-def prop_edit(recipient_username, prop_name):
-    prop_to_transfer = Property.get_or_none(Property.name == prop_name)
-    recipient = User.get_or_none(User.username == recipient_username)
-    if not prop_to_transfer:
-        send('no such property')
-        return
-    if not recipient:
-        send('no such user')
-        return
-
-    prop_to_transfer.user_id = recipient.id
-    if prop_to_transfer.save():
-        activity_create(
-            f'{recipient_username} received {prop_name} from {current_user.username}')
-    else:
-        send('property.save failed')
-
-
 @socketio.on('wealth_request')
 def wealth_index():
     users = User.select().where((User.monopoly > 0) & (User.username != 'Banker'))
@@ -373,3 +288,8 @@ def wealth_index():
         wealth_list.append(
             f'{user.username} has a total wealth of ${user.wealth}')
     emit('wealth_show', wealth_list)
+
+
+@monopoly_blueprint.route('/eww')
+def puzzle():
+    return render_template('monopoly/puzzle.html')
