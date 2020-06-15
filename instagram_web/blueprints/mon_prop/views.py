@@ -83,7 +83,6 @@ def create():
 def prop_show(username, house=False):
     if current_user.is_authenticated:
         user = User.get_or_none(User.username == str(username))
-        print(username)
         if not user:
             print('no such user')
             return
@@ -102,9 +101,11 @@ def prop_show(username, house=False):
                 'house_price': house_price,
                 'image_url': image_url
             })
+
         prop_dict = {
             'username': user.username,
-            'values': prop_data
+            'values': prop_data,
+            'house': house
         }
         data = json.dumps(prop_dict)
         emit('prop_response', data)

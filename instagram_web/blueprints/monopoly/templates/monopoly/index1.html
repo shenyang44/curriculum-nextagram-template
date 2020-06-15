@@ -64,7 +64,7 @@
                 {% if current_user.username == 'Banker' %}
                 <div>
                     <button id='shuffle-btn'>
-                        shuffle cards
+                        shuffle
                     </button>
                 </div>
                 {% endif %}
@@ -614,7 +614,7 @@
             //sending requests for owned props, any user
             const propButton = $('#prop-button')
             const propModal = $('#property-modal')
-
+            const propRow = $('#prop-row')
             propButton.click(() => {
                 socket.emit('prop_request', currentUsername)
                 socket.emit('user_request')
@@ -625,14 +625,11 @@
             })
 
             $('#buy-house-link').click(() => {
-                propModal.modal('show')
-                propRow.html('')
                 socket.emit('prop_request', currentUsername, true)
             })
             // receiving and displaying response for all owned properties.
             socket.on('prop_response', (data) => {
                 let propResponse = JSON.parse(data)
-                let propRow = $('#prop-row')
                 propRow.html('')
                 propData = propResponse.values
 
@@ -646,7 +643,7 @@
                                 <div id='${x.name}' class = '${x.house_price} prop-btn-container'>
                                 </div> 
                             </div>
-                            `)
+                        `)
                     })
                     if (propResponse.house) {
                         $('.prop-btn-container').not('.0').html(
