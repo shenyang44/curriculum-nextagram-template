@@ -88,19 +88,7 @@ def draw_card(category):
         elif user.id == poorest_user.id:
             card.alternative_img = 'https://nextagram-shen.s3.amazonaws.com/doc-fee-3.jpg'
 
-    card.save()
-    image_url = card.image_url
-    if card.alternative_img is not None:
-        image_url = card.alternative_img
-
-    card_dict = {
-        'description': card.description,
-        'image_url': image_url,
-        'order': card.order
-    }
-
-    emit('card_drawn', json.dumps(card_dict))
-
+    emit('card_drawn')
     card.user_id = current_user.id
     card.order += 32
     card.save()

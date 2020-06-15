@@ -382,6 +382,11 @@
                         </li>
                         <br>
                         <li>
+                            Do not spam any buttons or links, please be patient. Refresh page or ask others if update
+                            registered before clicking any buttons again.
+                        </li>
+                        <br>
+                        <li>
                             Have a good time and don't break any friendships :)
                         </li>
                     </ul>
@@ -697,8 +702,7 @@
             // chance and community chest cards
             viewCard = (username) => socket.emit('view_card', username)
 
-            socket.on('card_drawn', (data) => {
-                card = JSON.parse(data)
+            socket.on('card_drawn', () => {
                 $('#card-div').html('<button id="card-btn" class="btn btn-outline-success">Draw Card</button>')
                 $('#card-btn').click(() => {
                     viewCard(currentUsername)
