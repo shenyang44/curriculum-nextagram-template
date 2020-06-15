@@ -122,7 +122,7 @@ def show(username):
 
 @socketio.on('card_effect')
 def card_effect():
-    from instagram_web.blueprints.monopoly.views import update_positions
+    from instagram_web.blueprints.monopoly.views import update_positions, update_jailed
     if not current_user.is_authenticated:
         flash('You need to be logged in!', 'danger')
         return redirect(url_for('users.index'))
@@ -131,7 +131,8 @@ def card_effect():
     if not card:
         send('no card found! seek help')
         return
-
+    if card.activated:
+        return
     if card.description == 'go to jail':
         current_user.position = 10
         current_user.jailed = 0
@@ -175,3 +176,4 @@ def card_effect():
     card.save()
     current_user.save()
     update_positions()
+    update_jailed()
