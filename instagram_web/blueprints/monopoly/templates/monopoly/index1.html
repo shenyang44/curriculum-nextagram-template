@@ -705,6 +705,7 @@
             socket.on('card_drawn', () => {
                 $('#card-div').html('<button id="card-btn" class="btn btn-outline-success">Draw Card</button>')
                 $('#card-btn').click(() => {
+                    console.log('clickerooned')
                     viewCard(currentUsername)
                     socket.emit('card_effect')
                 })
