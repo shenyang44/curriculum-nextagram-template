@@ -709,7 +709,10 @@
                     socket.emit('card_effect')
                 })
             })
-
+            socket.on('affected', () => {
+                console.log('card effect has happened')
+                $('#card-div').html('')
+            })
             positionContainer.on('click', '.position-span', (e) => {
                 viewCard(e.target.getAttribute('data-card-owner'))
             })

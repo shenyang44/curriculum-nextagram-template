@@ -177,3 +177,4 @@ def card_effect():
     current_user.save()
     update_positions()
     update_jailed()
+    emit('affected')
