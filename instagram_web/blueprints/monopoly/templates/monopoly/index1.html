@@ -44,8 +44,10 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item" id='pay-modal-launcher' data-toggle="modal" data-target="#payModal">Pay
                             Player/Bank </a>
+                        <a class='dropdown-item' id='buy-house-link' data-toggle='modal'
+                            data-target="#property-modal">Buy House/Hotel</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Hentai Here</a>
+                        <a class="dropdown-item" href="{{url_for('monopoly.puzzle')}}">Hentai Here</a>
                     </div>
                 </div>
 
@@ -62,7 +64,7 @@
                 {% if current_user.username == 'Banker' %}
                 <div>
                     <button id='shuffle-btn'>
-                        shuffle cards
+                        shuffle
                     </button>
                 </div>
                 {% endif %}
@@ -320,7 +322,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div id='prop-modal-content' class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Owned Props</h5>
+                    <h5 id='prop-modal-title' class="modal-title">Owned Props</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -611,57 +613,71 @@
 
             //sending requests for owned props, any user
             const propButton = $('#prop-button')
+            const propModal = $('#property-modal')
+            const propRow = $('#prop-row')
             propButton.click(() => {
                 socket.emit('prop_request', currentUsername)
                 socket.emit('user_request')
             })
             positionContainer.on('click', '.username-span', (e) => {
                 socket.emit('prop_request', e.target.textContent)
-                $('#property-modal').modal('show')
+                propModal.modal('show')
+            })
+
+            $('#buy-house-link').click(() => {
+                socket.emit('prop_request', currentUsername, true)
             })
             // receiving and displaying response for all owned properties.
             socket.on('prop_response', (data) => {
                 let propResponse = JSON.parse(data)
-                let propRow = $('#prop-row')
                 propRow.html('')
                 propData = propResponse.values
 
                 if (propResponse.username == currentUsername) {
                     propData.forEach((x, i) => {
                         propRow.append(`
-                        <div class="col-md-6">
-                            <img width='100%' src="${x.image_url}" alt="${i} prop">
-                            <br>
-                            Number of houses: ${x.houses}
-                            <div id='${x.name}' class = '${x.house_price} prop-btn-container'>
-                                <button type="button" class=" transfer-btn btn dropdown-toggle btn-warning" data-toggle='dropdown'>Transfer Ownership</button>
-                                <div class="dropdown-menu transfer-dropdown" aria-labelledby="dropdownMenuButton">
-                                    
-                                </div>
-                            </div> 
-                        </div>
-                    `)
+                            <div class="col-md-6">
+                                <img width='100%' src="${x.image_url}" alt="${i} prop">
+                                <br>
+                                Number of houses: ${x.houses}
+                                <div id='${x.name}' class = '${x.house_price} prop-btn-container'>
+                                </div> 
+                            </div>
+                        `)
                     })
+                    if (propResponse.house) {
+                        $('.prop-btn-container').not('.0').html(
+                            '<button type="button" class="house-btn btn btn-success">Buy house/hotel</button>'
+                        )
+                    }
+                    else {
+                        $('.prop-btn-container').html(`
+                            <button type="button" class=" transfer-btn btn dropdown-toggle btn-warning" data-toggle='dropdown'>Transfer Ownership</button>
+                            <div class="dropdown-menu transfer-dropdown" aria-labelledby="dropdownMenuButton"> 
+                            </div>
+                        `)
+                    }
                 }
                 else {
-                    propData.forEach((x, i) => {
-                        propRow.append(`
-                        <div class="col-md-6">
-                            <img width='100%' src="${x.image_url}" alt="${i} prop">
-                            <br>
-                            Number of houses: ${x.houses}
-                        </div>
-                    `)
-                    })
+                    $('#prop-modal-title').text(`${propResponse.username}'s properties`)
+                    if (propData.length == 0) {
+                        propRow.html('<p> No properties :\( </p>')
+                    } else {
+                        propData.forEach((x, i) => {
+                            propRow.append(`
+                            <div class="col-md-6">
+                                <img width='100%' src="${x.image_url}" alt="${i} prop">
+                                <br>
+                                Number of houses: ${x.houses}
+                            </div>
+                            `)
+                        })
+                    }
                 }
 
                 otherUsers.forEach((value) => {
                     $('.transfer-dropdown').append(`<a class="dropdown-item transfer-select" href="#">${value}</a>`)
                 })
-
-                $('.prop-btn-container').not('.0').prepend(
-                    '<button type="button" class="house-btn btn btn-success">Buy house/hotel</button>'
-                )
 
                 $('.transfer-select').click((e) => {
                     let propName = e.target.parentNode.parentNode.id
@@ -671,7 +687,6 @@
                     }
                 })
             })
-
             $('#prop-row').on('click', '.house-btn', (e) => {
                 let propName = e.target.parentElement.id
                 if (confirm(`Confirm house purchase for ${propName}?`)) {

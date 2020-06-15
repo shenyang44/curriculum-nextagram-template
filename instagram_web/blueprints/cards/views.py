@@ -150,6 +150,8 @@ def card_effect():
         current_user.doubles = 0
     elif card.description == 'go back 3':
         current_user.position -= 3
+        if current_user.position == 33:
+            draw_card('community')
     elif card.description == 'go to go':
         current_user.position = 0
         current_user.money += 200
