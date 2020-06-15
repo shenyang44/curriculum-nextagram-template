@@ -171,7 +171,7 @@
                     Leicester Square
                 </section>
                 <section class="mon-section non-prop">
-                    Income tax. (10% or $200)
+                    Income tax. (10%)
                 </section>
             </div>
             <div class="col-1 mon-col">
@@ -704,12 +704,13 @@
 
             socket.on('card_drawn', () => {
                 $('#card-div').html('<button id="card-btn" class="btn btn-outline-success">Draw Card</button>')
-                $('#card-btn').click(() => {
-                    console.log('clickerooned')
-                    viewCard(currentUsername)
-                    socket.emit('card_effect')
-                })
             })
+
+            $('#card-div').on('click', '#card-btn', () => {
+                viewCard(currentUsername)
+                socket.emit('card_effect')
+            })
+
             socket.on('affected', () => {
                 console.log('card effect has happened')
                 $('#card-div').html('')
