@@ -243,10 +243,6 @@ def reset():
         deletion = ActivityLog.delete().where(ActivityLog.text != '')
         deletion.execute()
 
-        cards = Card.select().where(Card.user_id != None)
-        for card in cards:
-            card.user_id = None
-            card.save()
         shuffle()
 
         return redirect(request.referrer)

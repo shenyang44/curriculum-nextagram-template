@@ -47,12 +47,16 @@ def index():
     return render_template('cards/index.html', cards=cards)
 
 
+def card_reset():
+    reset_query = Card.update(user_id=None, order=None,
+                              activated=False, alternative_img=None)
+    reset_query.execute()
+
+
 @socketio.on('shuffle_cards')
 def shuffle():
+    card_reset()
     card_query = Card.select()
-    for card in card_query:
-        card.order = None
-        card.save()
     cards = list(card_query)
     random.shuffle(cards)
     for i in range(len(cards)):
@@ -180,7 +184,3 @@ def card_effect():
     update_positions()
     update_jailed()
     emit('affected')
-
-
-def card_reset():
-    return
