@@ -323,7 +323,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div id='prop-modal-content' class="modal-content">
                 <div class="modal-header">
-                    <h5 id='prop-modal-title' class="modal-title">Owned Props</h5>
+                    <h5 id='prop-modal-title' class="modal-title">Owned Properties</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -385,6 +385,11 @@
                         <li>
                             Do not spam any buttons or links, please be patient. Refresh page or ask others if update
                             registered before clicking any buttons again.
+                        </li>
+                        <br>
+                        <li>
+                            Small strategy tip: This game is a bit more punishing to those holding less current assets,
+                            compared to traditional monopoly. Factor this in to your decision making.
                         </li>
                         <br>
                         <li>
@@ -640,6 +645,7 @@
                 propData = propResponse.values
 
                 if (propResponse.username == currentUsername) {
+                    $('#prop-modal-title').text('Owned Properties')
                     propData.forEach((x, i) => {
                         propRow.append(`
                             <div class="col-md-6">
