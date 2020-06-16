@@ -223,20 +223,14 @@ def roll(data):
 def reset():
     if current_user.is_authenticated and (current_user.username == 'Banker' or current_user.username == 'shennex'):
         banker = User.get_or_none(User.username == 'Banker')
-        users = User.select().where((User.monopoly > 0) & (User.username != 'Banker'))
-        for user in users:
-            user.jailed = -1
-            user.position = 0
-            user.money = 1500
-            user.doubles = 0
-            user.save()
 
-        properties = Property.select()
-        for prop in properties:
-            prop.houses = 0
-            prop.mortgaged = False
-            prop.user_id = banker.id
-            prop.save()
+        users_update = User.update(jailed=-1, position=0, money=1500, doubles=0,).where(
+            (User.monopoly > 0) & (User.username != 'Banker'))
+        users_update.execute()
+
+        prop_update = Property.update(
+            houses=0, mortgaged=False, user_id=banker.id)
+        prop_update.execute()
 
         banker.money = 1000000
         banker.save()
