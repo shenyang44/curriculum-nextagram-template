@@ -93,12 +93,7 @@ def handle_connection():
     if len(current_user.card) > 0:
         card = current_user.card[0]
         if not card.activated:
-            card_dict = {
-                'description': card.description,
-                'image_url': card.image_url,
-                'order': card.order
-            }
-            emit('card_drawn', json.dumps(card_dict))
+            emit('card_drawn')
 
 
 @socketio.on('money_request')

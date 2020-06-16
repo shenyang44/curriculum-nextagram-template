@@ -75,17 +75,19 @@ def draw_card(category):
         if user.wealth > wealthiest_user.wealth:
             wealthiest_user = user
 
-    if card.description == 'poor tax' and user.username == wealthiest_user.username:
+    if card.description == 'poor tax' and current_user.username == wealthiest_user.username:
         card.alternative_img = 'https://nextagram-shen.s3.amazonaws.com/poor-tax-rich.jpg'
+
     if card.description == 'doc fee':
         poorest_user = users[0]
         for user in users:
             if user.wealth < poorest_user.wealth:
                 poorest_user = user
-
-        if user.id == wealthiest_user.id:
+        print(wealthiest_user.username)
+        print(poorest_user.username)
+        if current_user.id == wealthiest_user.id:
             card.alternative_img = 'https://nextagram-shen.s3.amazonaws.com/doc-fee-1.jpg'
-        elif user.id == poorest_user.id:
+        elif current_user.id == poorest_user.id:
             card.alternative_img = 'https://nextagram-shen.s3.amazonaws.com/doc-fee-3.jpg'
 
     emit('card_drawn')
@@ -178,3 +180,7 @@ def card_effect():
     update_positions()
     update_jailed()
     emit('affected')
+
+
+def card_reset():
+    return
