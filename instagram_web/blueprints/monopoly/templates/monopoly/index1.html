@@ -707,12 +707,12 @@
             })
 
             $('#card-div').on('click', '#card-btn', () => {
-                viewCard(currentUsername)
                 socket.emit('card_effect')
             })
 
             socket.on('affected', () => {
                 console.log('card effect has happened')
+                viewCard(currentUsername)
                 $('#card-div').html('')
             })
             positionContainer.on('click', '.position-span', (e) => {
