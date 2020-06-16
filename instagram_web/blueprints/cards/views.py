@@ -160,18 +160,18 @@ def card_effect():
         elif current_user.position == 22:
             current_user.position = 25
         else:
-            current_user.positon = 15
+            current_user.position = 15
     elif card.description == 'go to trafalgar':
         if current_user.position > 24:
             current_user.money += 200
-        current_user.positon = 24
+        current_user.position = 24
     elif card.description == 'nearest util':
-        if current_user.positon == 33:
+        if current_user.position == 33:
             current_user.money += 200
         if current_user.position == 22:
             current_user.position = 28
         else:
-            current_user.positon = 12
+            current_user.position = 12
     card.activated = True
     card.save()
     current_user.save()
