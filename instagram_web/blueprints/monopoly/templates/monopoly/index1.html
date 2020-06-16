@@ -186,6 +186,7 @@
                     <hr>
                 </section>
                 <section id='activity-container' class="mon-blank mon-section">
+
                 </section>
                 <section id='2' class="mon-section mon-brown prop">
                     Whitechapel Road
@@ -704,6 +705,7 @@
 
             socket.on('card_drawn', () => {
                 $('#card-div').html('<button id="card-btn" class="btn btn-outline-success">Draw Card</button>')
+                rollSection.html('')
             })
 
             $('#card-div').on('click', '#card-btn', () => {
@@ -711,8 +713,9 @@
             })
 
             socket.on('affected', () => {
-                console.log('card effect has happened')
                 viewCard(currentUsername)
+                console.log('card effect has happened')
+                rollSection.html('<button type="button" id="roll-btn" class="btn btn-outline-secondary">Roll Dice.</button>')
                 $('#card-div').html('')
             })
             positionContainer.on('click', '.position-span', (e) => {

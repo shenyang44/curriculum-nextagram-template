@@ -150,6 +150,22 @@ def go_and_jail_check():
         return('in jail')
 
 
+@socketio.on('jail_pay')
+def jail_pay(cost):
+    if current_user.is_authenticated:
+        current_user.money -= int(cost)
+        jail_free()
+        update_jailed()
+        if not current_user.save():
+            send('payment could not be done for some reason.', 'danger')
+        else:
+            activity_create(
+                f'{current_user.username} payed ${cost} to get out of jail.')
+    else:
+        flash('need to be signed in to perform this action!', 'warning')
+        return redirect(url_for('users.index'))
+
+
 @socketio.on('roll')
 def roll(data):
     if len(current_user.card) > 0:
@@ -171,9 +187,10 @@ def roll(data):
             jail_free()
             text += 'Thus escaping jail. '
         elif current_user.jailed == 2:
-            current_user.money -= 50
+            cost = math.ceil(current_user.wealth * 0.05)
+            current_user.money -= cost
             jail_free()
-            text += 'Got out of jail by paying $50. '
+            text += f'Got out of jail by paying ${cost}.'
         else:
             current_user.jailed += 1
             activity_create(
@@ -241,22 +258,6 @@ def reset():
     else:
         flash('no access for u, soz', 'danger')
         return(redirect(url_for('users.index')))
-
-
-@socketio.on('jail_pay')
-def jail_pay(cost):
-    if current_user.is_authenticated:
-        current_user.money -= int(cost)
-        jail_free()
-        update_jailed()
-        if not current_user.save():
-            send('payment could not be done for some reason.', 'danger')
-        else:
-            activity_create(
-                f'{current_user.username} payed ${cost} to get out of jail.')
-    else:
-        flash('need to be signed in to perform this action!', 'warning')
-        return redirect(request.referrer)
 
 
 @socketio.on('pay')
