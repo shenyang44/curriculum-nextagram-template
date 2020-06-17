@@ -10,7 +10,7 @@ class Property(BaseModel):
     houses = pw.IntegerField(default=0)
     mortgaged = pw.BooleanField(default=False)
     user = pw.ForeignKeyField(User, backref='properties')
-    house_price = pw.IntegerField(default=0)
+    house_price = pw.IntegerField()
     category = pw.CharField()
     image = pw.CharField(null=True)
     price = pw.IntegerField()

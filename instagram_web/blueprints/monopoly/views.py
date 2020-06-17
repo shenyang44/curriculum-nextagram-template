@@ -152,7 +152,7 @@ def jail_pay(cost):
         jail_free()
         update_jailed()
         if not current_user.save():
-            send('payment could not be done for some reason.', 'danger')
+            send('jail payment could not be done for some reason.')
         else:
             activity_create(
                 f'{current_user.username} payed ${cost} to get out of jail.')

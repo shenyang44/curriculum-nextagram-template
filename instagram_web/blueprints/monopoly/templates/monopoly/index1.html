@@ -50,24 +50,12 @@
                         <a class="dropdown-item" href="{{url_for('monopoly.puzzle')}}">Hentai Here</a>
                     </div>
                 </div>
-
                 <!-- Button to open property modal -->
                 <div>
                     <button data-toggle="modal" data-target="#property-modal" id='prop-button' class="btn btn-dark"><i
                             class="fas fa-home"></i>
                     </button>
                 </div>
-                <br>
-                <div>
-                    <a href="{{url_for('monopoly.create')}}">Exit</a>
-                </div>
-                {% if current_user.username == 'Banker' %}
-                <div>
-                    <button id='shuffle-btn'>
-                        shuffle
-                    </button>
-                </div>
-                {% endif %}
                 <div>
                     <button id='info-btn'><i class="fas fa-info-circle"></i></button>
                 </div>
@@ -75,7 +63,25 @@
                 <div>
                     <button id='users-wealth-btn'><i class="fas fa-users"></i></button>
                 </div>
+                <!-- <div>
+                    <button id='alter-locations-btn'><i class="fas fa-map-marked-alt"></i></button>
+                </div>
+                <div>
+                    <button id='alter-houses-btn'>
+                        <i class="fas fa-laptop-house"></i>
+                    </button>
+                </div> -->
+                <br>
+                <div>
+                    <button id='shuffle-btn'>
+                        shuffle
+                    </button>
+                </div>
                 {% endif %}
+                <br>
+                <div>
+                    <a href="{{url_for('monopoly.create')}}">Exit</a>
+                </div>
             </div>
             <div class="col-1 mon-col">
                 <section class="mon-section non-prop">
@@ -403,7 +409,7 @@
             </div>
         </div>
     </div>
-    <!-- users' wealth modal, only viewable by Banker -->
+    <!-- View users' wealth -->
     <div id='wealth-modal' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div id='wealth-modal-content' class="modal-content">
@@ -431,6 +437,7 @@
     {% if (current_user.username == 'Banker') or (current_user.username == 'shennex') %}
     <a href="{{url_for('monopoly.reset')}}">RESET!</a>
     {% endif %}
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
         integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 
@@ -465,6 +472,9 @@
             socket.on('message', (message) => {
                 if (message == 'broke') {
                     showAlert('Lmao, you too broke for that shit.', 4000)
+                }
+                else if (message == 'no house') {
+                    showAlert('You cannot sell what you do not have...', 4000)
                 }
                 else {
                     showAlert(message, 6000)
@@ -647,28 +657,35 @@
                 if (propResponse.username == currentUsername) {
                     $('#prop-modal-title').text('Owned Properties')
                     propData.forEach((x, i) => {
-                        propRow.append(`
+                        if (propResponse.house && (x.house_price > 0)) {
+                            propRow.append(`
                             <div class="col-md-6">
                                 <img width='100%' src="${x.image_url}" alt="${i} prop">
                                 <br>
-                                Number of houses: ${x.houses}
-                                <div id='${x.name}' class = '${x.house_price} prop-btn-container'>
+                                Number of houses:
+                                <br>
+                                <div id='${x.name}'>
+                                    <button type="button" class="sell-house-btn btn btn-success">-</button>${x.houses}<button type="button" class="buy-house-btn btn btn-success">+</button>
                                 </div> 
                             </div>
                         `)
-                    })
-                    if (propResponse.house) {
-                        $('.prop-btn-container').not('.0').html(
-                            '<button type="button" class="house-btn btn btn-success">Buy house/hotel</button>'
-                        )
-                    }
-                    else {
-                        $('.prop-btn-container').html(`
-                            <button type="button" class=" transfer-btn btn dropdown-toggle btn-warning" data-toggle='dropdown'>Transfer Ownership</button>
-                            <div class="dropdown-menu transfer-dropdown" aria-labelledby="dropdownMenuButton"> 
+                        }
+                        else if (!propResponse.house) {
+                            propRow.append(`
+                            <div class="col-md-6">
+                                <img width='100%' src="${x.image_url}" alt="${i} prop">
+                                <br>
+                                Number of houses:
+                                <br>
+                                <div id='${x.name}'>
+                                    <button type="button" class=" transfer-btn btn dropdown-toggle btn-warning" data-toggle='dropdown'>Transfer Ownership</button>
+                                    <div class="dropdown-menu transfer-dropdown" aria-labelledby="dropdownMenuButton"> 
+                                    </div>
+                                </div> 
                             </div>
                         `)
-                    }
+                        }
+                    })
                 }
                 else {
                     $('#prop-modal-title').text(`${propResponse.username}'s properties`)
@@ -699,13 +716,18 @@
                     }
                 })
             })
-            $('#prop-row').on('click', '.house-btn', (e) => {
+            $('#prop-row').on('click', '.buy-house-btn', (e) => {
                 let propName = e.target.parentElement.id
                 if (confirm(`Confirm house purchase for ${propName}?`)) {
-                    socket.emit('house_buy', propName)
+                    socket.emit('house edit', propName)
                 }
             })
-
+            $('#prop-row').on('click', '.sell-house-btn', (e) => {
+                let propName = e.target.parentElement.id
+                if (confirm(`Confirm selling one house at ${propName}?`)) {
+                    socket.emit('house edit', propName, true)
+                }
+            })
             // chance and community chest cards
             viewCard = (username) => socket.emit('view_card', username)
 
@@ -758,6 +780,14 @@
                 })
                 $('#wealth-modal').modal('show')
             })
+            // Banker controls, unnecessary for now.
+            // $('#alter-locations-btn').click(() => {
+            //     $('#alter-locations-modal').modal('show')
+            // })
+
+            // $('#alter-houses-btn').click(() => {
+            //     $('#alter-houses-modal').modal('show')
+            // })
         })
     </script>
 </body>
