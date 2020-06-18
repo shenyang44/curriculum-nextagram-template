@@ -130,7 +130,7 @@ def house_create(prop_name, sell=False):
                 current_user.money += (current_prop.house_price * 0.5)
                 current_prop.houses -= 1
                 activity_create(
-                    f'{current_user.username} sold a house at {prop_name} | ${int(current_prop.house_price * 0.5})')
+                    f'{current_user.username} sold a house at {prop_name} | ${int(current_prop.house_price * 0.5)}')
         else:
             if current_user.money < current_prop.house_price:
                 print('broke')

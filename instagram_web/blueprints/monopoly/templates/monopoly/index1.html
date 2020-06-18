@@ -15,6 +15,7 @@
     <script src="https://kit.fontawesome.com/1816c993a6.js" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
+
     <title>Monopoly!</title>
 </head>
 
@@ -441,7 +442,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
         integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 
-
     <script type="text/javascript" charset="utf-8">
         $(() => {
             const socket = io();
@@ -659,13 +659,15 @@
                     propData.forEach((x, i) => {
                         if (propResponse.house && (x.house_price > 0)) {
                             propRow.append(`
-                            <div class="col-md-6">
-                                <img width='100%' src="${x.image_url}" alt="${i} prop">
+                            <div class="col-md-6 prop-col">
+                                <div>
+                                    <img width='100%' src="${x.image_url}" alt="${i} prop">
+                                </div>
                                 <br>
                                 Number of houses:
                                 <br>
-                                <div id='${x.name}'>
-                                    <button type="button" class="sell-house-btn btn btn-success">-</button>${x.houses}<button type="button" class="buy-house-btn btn btn-success">+</button>
+                                <div class = 'house-count' id='${x.name}'>
+                                    <button type="button" class="sell-house-btn btn btn-success">-</button>&nbsp${x.houses}&nbsp<button type="button" class="buy-house-btn btn btn-success">+</button>
                                 </div> 
                             </div>
                         `)

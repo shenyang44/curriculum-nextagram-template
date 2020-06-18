@@ -1,5 +1,3 @@
-console.log('shoot')
-
 $(document).ready(() => {
     passInput = $('#passInput')
     passInput.keyup(() => {
