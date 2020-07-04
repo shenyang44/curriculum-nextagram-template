@@ -11,6 +11,7 @@ Visit https://nextagram-shen.herokuapp.com to begin the journey.
 
 All set!
 
+Resetting the game can only be done by the Banker.
 Unfortunately there is only one lobby, so other players would have to exit or "toggle" their monopoly status again in order to leave the room.
 
 
