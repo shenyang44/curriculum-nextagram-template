@@ -12,7 +12,7 @@ Visit https://nextagram-shen.herokuapp.com to begin the journey.
 All set!
 
 ## Logging in as Banker.
-username: Banker
+username: Banker  
 password: Password!
 
 ## Things to note.
