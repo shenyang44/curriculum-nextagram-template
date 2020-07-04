@@ -637,7 +637,6 @@
             propButton.click(() => {
                 socket.emit('prop_request', currentUsername)
                 socket.emit('user_request')
-                prop.modal('show')
             })
             positionContainer.on('click', '.username-span', (e) => {
                 socket.emit('prop_request', e.target.textContent)
@@ -646,10 +645,6 @@
 
             $('#buy-house-link').click(() => {
                 socket.emit('prop_request', currentUsername, true)
-            })
-
-            socket.on('house update', (propName, houses) => {
-                $(`#${propName} > span`).text(houses)
             })
 
             // receiving and displaying response for all owned properties.
@@ -670,11 +665,16 @@
                                 <br>
                                 Number of houses:
                                 <br>
-                                <div class = 'house-count' id='${x.name}'>
-                                    <button type="button" class="sell-house-btn btn btn-success">-</button>&nbsp<span>${x.houses}</span>&nbsp<button type="button" class="buy-house-btn btn btn-success">+</button>
+                                <div id='${x.name}'>
+                                    <button type="button" class="sell-house-btn btn btn-success">-</button>&nbsp<span class='house-count'>${x.houses}</span>&nbsp<button type="button" class="buy-house-btn btn btn-success">+</button>
                                 </div> 
                             </div>
-                        `)
+                            `)
+                            socket.on('house update', (propName, houses) => {
+                                console.log(`${propName} ${houses} whyy`)
+                                let name = 'Old Kent Road'
+                                $(`#${name}`).html('')
+                            })
                         }
                         else if (!propResponse.house) {
                             propRow.append(`

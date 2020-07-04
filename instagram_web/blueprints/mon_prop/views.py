@@ -146,10 +146,9 @@ def house_create(prop_name, sell=False):
         if not current_user.save():
             print('user did not save')
 
-        emit('house update', prop_name, current_prop.houses)
+        emit('house update', (prop_name, current_prop.houses))
 
 
-@socketio.on('house sell')
 @socketio.on('prop_transfer')
 def prop_edit(recipient_username, prop_name):
     prop_to_transfer = Property.get_or_none(Property.name == prop_name)
