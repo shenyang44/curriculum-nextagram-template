@@ -324,8 +324,7 @@
         </div>
     </div>
     {% endfor %}
-
-    <!-- Others' property modal -->
+    <!-- property modal -->
     <div id='property-modal' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div id='prop-modal-content' class="modal-content">
@@ -338,28 +337,6 @@
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="row" id='prop-row'>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Donezo</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- User Prop Modal -->
-    <div id='self-property-modal' class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div id='self-prop-modal-content' class="modal-content">
-                <div class="modal-header">
-                    <h5 id='self-prop-modal-title' class="modal-title">Owned Properties</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row" id='self-prop-row'>
                         </div>
                     </div>
                 </div>
@@ -669,6 +646,7 @@
             $('#buy-house-link').click(() => {
                 socket.emit('prop_request', currentUsername, true)
             })
+
             // receiving and displaying response for all owned properties.
             socket.on('prop_response', (data) => {
                 let propResponse = JSON.parse(data)
@@ -687,11 +665,16 @@
                                 <br>
                                 Number of houses:
                                 <br>
-                                <div class = 'house-count' id='${x.name}'>
-                                    <button type="button" class="sell-house-btn btn btn-success">-</button>&nbsp${x.houses}&nbsp<button type="button" class="buy-house-btn btn btn-success">+</button>
+                                <div id='${x.name}'>
+                                    <button type="button" class="sell-house-btn btn btn-success">-</button>&nbsp<span class='house-count'>${x.houses}</span>&nbsp<button type="button" class="buy-house-btn btn btn-success">+</button>
                                 </div> 
                             </div>
-                        `)
+                            `)
+                            socket.on('house update', (propName, houses) => {
+                                console.log(`${propName} ${houses} whyy`)
+                                let name = 'Old Kent Road'
+                                $(`#${name}`).html('')
+                            })
                         }
                         else if (!propResponse.house) {
                             propRow.append(`
