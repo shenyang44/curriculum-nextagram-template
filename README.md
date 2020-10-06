@@ -11,7 +11,16 @@ Visit https://nextagram-shen.herokuapp.com to begin the journey.
 
 All set!
 
-Resetting the game can only be done by the Banker.
+## Logging in as Banker.
+username: Banker  
+password: Password!
+
+## Things to note.
+- Initially all properties are owned by Banker, so only through the Banker's account can properties be given out, at start.
+- Content in modal do not update while modal is open :( it is a WIP. So, reopening some modals may be necessary to see updated statuses.
+- Resetting the game can only be done by the Banker.
+- Chance and Community cards are shuffled upon game reset, and keep their order throughout one playthrough.
+
 Unfortunately there is only one lobby, so other players would have to exit or "toggle" their monopoly status again in order to leave the room.
 
 
