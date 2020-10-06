@@ -649,15 +649,18 @@
 
             // receiving and displaying response for all owned properties.
             socket.on('prop_response', (data) => {
-                let propResponse = JSON.parse(data)
+                let propResponse = JSON.parse(data);
                 propRow.html('')
-                propData = propResponse.values
+                propData = propResponse.values;
 
                 if (propResponse.username == currentUsername) {
-                    $('#prop-modal-title').text('Owned Properties')
-                    propData.forEach((x, i) => {
-                        if (propResponse.house && (x.house_price > 0)) {
-                            propRow.append(`
+                    if (propData.length < 1) {
+                        propRow.html('<p> No properties :\( </p>');
+                    } else {
+                        $('#prop-modal-title').text('Owned Properties')
+                        propData.forEach((x, i) => {
+                            if (propResponse.house && (x.house_price > 0)) {
+                                propRow.append(`
                             <div class="col-md-6 prop-col">
                                 <div>
                                     <img width='100%' src="${x.image_url}" alt="${i} prop">
@@ -670,14 +673,14 @@
                                 </div> 
                             </div>
                             `)
-                            socket.on('house update', (propName, houses) => {
-                                console.log(`${propName} ${houses} whyy`)
-                                let name = 'Old Kent Road'
-                                $(`#${name}`).html('')
-                            })
-                        }
-                        else if (!propResponse.house) {
-                            propRow.append(`
+                                socket.on('house update', (propName, houses) => {
+                                    console.log(`${propName} ${houses} whyy`)
+                                    let name = 'Old Kent Road'
+                                    $(`#${name}`).html('')
+                                })
+                            }
+                            else if (!propResponse.house) {
+                                propRow.append(`
                             <div class="col-md-6">
                                 <img width='100%' src="${x.image_url}" alt="${i} prop">
                                 <br>
@@ -690,8 +693,9 @@
                                 </div> 
                             </div>
                         `)
-                        }
-                    })
+                            }
+                        })
+                    }
                 }
                 else {
                     $('#prop-modal-title').text(`${propResponse.username}'s properties`)
