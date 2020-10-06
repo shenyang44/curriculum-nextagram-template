@@ -1,4 +1,4 @@
-from authlib.flask.client import OAuth
+from authlib.integrations.flask_client import OAuth
 import config
 import os
 
